@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.3.0/knockout-min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+<script type="text/javascript" src="allSchools.js"></script>
+<script type="text/javascript" src="gridViewModel.js"></script>
+<script type="text/javascript" src="randomNames.js"></script>
+<script type="text/javascript" src="getRandomData.js"></script>
+</head>
+<body>
+<script type="text/html" id="instance-template">
+    <!-- ko foreach: items -->
+    <a data-bind="attr: { href: '/School/EditSchool/' + $parent.row.ID() }, text: instanceName"></a><!-- ko if: $index() < $parent.items().length - 1 -->,<!-- /ko -->
+    <!-- /ko -->
+</script>
+
+<script type="text/html" id="network-template">
+    <!-- ko foreach: items -->
+    <span data-bind="text: networkName"></span><!-- ko if: $index() < $parent.items().length - 1 -->,<!-- /ko -->
+    <!-- /ko -->
+</script>
+<div id="grid">
+  <div data-bind="template: {name: 'grid-template'}"></div>
+</div>
+<script type="text/javascript" src="gridInit.js"></script>
+</body>
+</html>

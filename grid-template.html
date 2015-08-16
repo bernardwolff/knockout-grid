@@ -1,0 +1,92 @@
+﻿<div data-bind="visible: isLoading">
+    <div class="pull-left" style="width: 32px; height: 32px; background-image: Url('spinner.gif')"></div>
+    Loading...
+</div>
+
+<div class="control-group" data-bind="visible: hasData">
+    <div class="controls">
+        <button data-bind="click: clearSort, enable: sorted" class="btn btn-mini"><i class="icon-remove"></i>Clear Sort</button>
+        <button data-bind="click: clearAllFilters, enable: filtered" class="btn btn-mini"><i class="icon-remove"></i>Clear Filters</button>
+
+        <span>
+            Displaying <strong data-bind="text: startIndex() + 1"></strong> to <strong data-bind="text: endIndex()"></strong> of
+            <strong data-bind="text: filteredData().length"></strong> items
+        </span>
+        <span data-bind="visible: filtered">
+            matching filter out of
+            <strong data-bind="text: rowItems().length"></strong> total items
+        </span>
+    </div>
+</div>
+
+<table class="table table-bordered table-hover table-striped" data-bind="visible: hasData">
+    <thead>
+    <tr data-bind="foreach: columns">
+        <!-- ko if: sortable -->
+        <th>
+            <!--the function wrapper for the click binding prevents it from being triggered on page load-->
+            <a href="javascript:void(0)" data-bind="text: label, click: function() { headerClick() }"></a>
+            <a href="javascript:void(0)" class="icon-chevron-up" data-bind="visible: isAscending, click: function() { headerClick() }"></a>
+            <a href="javascript:void(0)" class="icon-chevron-down" data-bind="visible: isDescending, click: function() { headerClick() }"></a>
+            <a href="javascript:void(0)" class="icon-filter" title=" filter" data-bind="click: function() { filterClick() }, style: { backgroundColor: filter() ? '#AAAAAA' : 'white' }"></a>
+            <span data-bind="text: filter"></span>
+            <span data-bind="visible: filterVisible" style="position: absolute; background-color: #EEEEEE; padding: 8px; border: 1px solid #AAAAAA">
+                    <input type="search" data-bind="value: enteredFilter, hasFocus: filterTextFocus, event: { keypress: filterEntered}" class="filter" placeholder="filter" />
+                    <a href="javascript:void(0)" data-bind="click: clearFilter, visible: enteredFilter" class="icon-remove" title="clear filter" style="display: inline-block; position: relative; left: -20px; top: -3px"></a>
+                    <div>
+                      <label><input type="radio" value="exact" data-bind="checked: enteredMatchType, attr: {name: 'matchType_' + propertyName }" />Exact match</label>
+                    </div>
+                    <div>
+                      <label><input type="radio" value="partial" data-bind="checked: enteredMatchType, attr: {name: 'matchType_' + propertyName }" />Partial match</label>
+                    </div>
+
+                    <button class="btn btn-mini" data-bind="click: function() { applyFilter() }">Apply</button>
+                    <button class="btn btn-mini" data-bind="click: function() { cancelFilter() }">Cancel</button>
+                </span>
+        </th>
+        <!-- /ko -->
+        <!-- ko ifnot: sortable -->
+        <th data-bind="text: label"></th>
+        <!-- /ko -->
+    </tr>
+    </thead>
+    <tbody data-bind="foreach: currentPageData">
+    <tr data-bind="foreach: $parent.columns">
+        <!-- ko if: templateName -->
+        <td data-bind="template: { name: templateName, data: {items: $parent[propertyName], row: $parent } }"></td>
+        <!-- /ko -->
+        <!-- ko ifnot: templateName -->
+        <td data-bind="click: function() { if ($data.editable && !$parent.editing()) $parent.beginEdit(); }">
+            <a data-bind="css: { 'icon-edit': editable && !$parent.editing() }, visible: editable && !$parent.editing() && !$parent.isSaving()" href="javascript:void(0)" title="click to edit"></a>
+            <div style="width: 32px; height: 32px; background-image: Url('spinner.gif')" data-bind="visible: editable && $parent.isSaving()"></div>
+            <span data-bind="text: $parent[propertyName], visible: !editable || !$parent.editing()"></span>
+            <textarea data-bind="value: $parent[propertyName], visible: editable && $parent.editing() && !$parent.isSaving()"></textarea>
+            <button class="btn btn-mini" data-bind="click: function() { save($parent) }, visible: editable && $parent.editing() && !$parent.isSaving()">Save</button>
+        </td>
+        <!-- /ko -->
+    </tr>
+    </tbody>
+</table>
+
+<div class="control-group" data-bind="visible: hasData">
+    <div class="controls">
+        <div class="pager" data-bind="visible: showPager">
+            <ul>
+                <li data-bind="css: {disabled: onFirstPage}"><a href="javascript:void(0)" data-bind="click: previousPage"><span aria-hidden="true">&larr;</span> Previous</a></li>
+                <li>page <input type="text" data-bind="value: currentPage" style="width: 20px"/> of <strong data-bind="text: totalPages"></strong></li>
+                <li data-bind="css: {disabled: onLastPage}"><a href="javascript:void(0)" data-bind="click: nextPage">Next <span aria-hidden="true">&rarr;</span></a></li>
+            </ul>
+            <div>Page size: <input type="text" data-bind="value: pageSize" style="width: 20px" /></div>
+        </div>
+
+        <div class="pagination pagination-mini" data-bind="visible: showPagination">
+            <ul>
+                <li class="previous" data-bind="css: {disabled: onFirstPage}"><a href="javascript:void(0)" data-bind="click: previousPage">&larr; Previous</a></li>
+                <!-- ko foreach: new Array(totalPages()) -->
+                <li data-bind="css: {active: $index() + 1 == $parent.currentPage()}"><a href="javascript:void(0)" data-bind="text: $index() + 1, click: function(){$parent.setPage($index() + 1)}"></a></li>
+                <!-- /ko -->
+                <li class="next" data-bind="css: {disabled: onLastPage}"><a href=" javascript:void(0)" data-bind="click: nextPage">Next &rarr;</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
